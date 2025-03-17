@@ -9,8 +9,24 @@ const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+// File validation function
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = [".txt", ".lvm"];
+    const fileExt = path.extname(file.originalname).toLowerCase();
+  
+    if (allowedTypes.includes(fileExt)) {
+      cb(null, true); // Accept file
+    } else {
+      cb(new Error("Invalid file type. Only .txt and .lvm files are allowed!"), false);
+    }
+  };
+
 // Storage for uploaded files
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ 
+    dest: "uploads/",
+    fileFilter: fileFilter,
+ });
 
 // Ensure output directories exist
 const outputDir = "output";
