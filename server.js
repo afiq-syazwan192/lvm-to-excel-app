@@ -67,10 +67,10 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 // Parse .lvm file (Assuming tab-separated values)
 function parseLVM(rawData) {
     const lines = rawData.trim().split("\n");
-    console.log("Raw lines:", lines); // Debugging step
+    // console.log("Raw lines:", lines); // Debugging step
     return lines.map(line => {
         const values = line.trim().split("\t").map(Number);
-        console.log("Parsed line:", values); // Debugging each parsed row
+        // console.log("Parsed line:", values); // Debugging each parsed row
         return values;
     });
 }
