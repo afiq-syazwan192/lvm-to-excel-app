@@ -46,6 +46,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         // Read and parse the .lvm file
         const rawData = fs.readFileSync(filePath, "utf-8");
         const data = parseLVM(rawData);
+        console.log(data[2]); //sdfsdf
 
         // Generate Excel file
         const excelPath = path.join(outputDir, `${fileName}.xlsx`);
@@ -87,28 +88,33 @@ async function createExcelWithChart(data, filePath) {
 
 // Create a PNG graph using Chart.js
 async function createChartImage(data, filePath) {
-    const canvas = new ChartJSNodeCanvas({ width, height, chartCallback });
+    const canvas = new ChartJSNodeCanvas({ width, height });
+
+    console.log(data);
+
+    // Extracting columns from the dataset
+    const timeValues = data.map(row => row[1]); // Extract Time from column 1
+    const s1Values = data.map(row => row[5]);  // Extract S1 (%) from column 5
+    const s2Values = data.map(row => row[6]);  // Extract S2 (%) from column 6
+    const s3Values = data.map(row => row[7]);  // Extract S3 (%) from column 7
+    const s4Values = data.map(row => row[8]);  // Extract S4 (%) from column 8
+
+    const datasets = [
+        { label: "S1 (%)", data: s1Values, borderColor: "red", borderWidth: 2, fill: false },
+        { label: "S2 (%)", data: s2Values, borderColor: "blue", borderWidth: 2, fill: false },
+        { label: "S3 (%)", data: s3Values, borderColor: "green", borderWidth: 2, fill: false },
+        { label: "S4 (%)", data: s4Values, borderColor: "purple", borderWidth: 2, fill: false }
+    ];
 
     const chartConfig = {
         type: "line",
-        data: {
-            labels: data.map((row, index) => index), // X-axis
-            datasets: [
-                {
-                    label: "LVM Data",
-                    data: data.map((row) => row[1]), // Y-axis
-                    borderColor: "blue",
-                    borderWidth: 2,
-                    fill: false,
-                },
-            ],
-        },
+        data: { labels: timeValues, datasets },
         options: {
             scales: {
                 x: { title: { display: true, text: "Time" } },
-                y: { title: { display: true, text: "Value" } },
-            },
-        },
+                y: { title: { display: true, text: "Percentage (%)" } }
+            }
+        }
     };
 
     const imageBuffer = await canvas.renderToBuffer(chartConfig);
