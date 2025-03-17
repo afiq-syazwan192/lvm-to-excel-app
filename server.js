@@ -45,9 +45,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     try {
         // Read and parse the .lvm file
         const rawData = fs.readFileSync(filePath, "utf-8");
+        console.log(rawData);
         const data = parseLVM(rawData);
-        console.log(data[2]); //sdfsdf
-
         // Generate Excel file
         const excelPath = path.join(outputDir, `${fileName}.xlsx`);
         await createExcelWithChart(data, excelPath);
@@ -68,7 +67,12 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 // Parse .lvm file (Assuming tab-separated values)
 function parseLVM(rawData) {
     const lines = rawData.trim().split("\n");
-    return lines.map((line) => line.split("\t").map(Number));
+    console.log("Raw lines:", lines); // Debugging step
+    return lines.map(line => {
+        const values = line.trim().split("\t").map(Number);
+        console.log("Parsed line:", values); // Debugging each parsed row
+        return values;
+    });
 }
 
 // Create Excel file with an embedded chart
@@ -90,10 +94,8 @@ async function createExcelWithChart(data, filePath) {
 async function createChartImage(data, filePath) {
     const canvas = new ChartJSNodeCanvas({ width, height });
 
-    console.log(data);
-
     // Extracting columns from the dataset
-    const timeValues = data.map(row => row[1]); // Extract Time from column 1
+    const timeValues = data.map(row => row[0]); // Extract Time from column 1
     const s1Values = data.map(row => row[5]);  // Extract S1 (%) from column 5
     const s2Values = data.map(row => row[6]);  // Extract S2 (%) from column 6
     const s3Values = data.map(row => row[7]);  // Extract S3 (%) from column 7

@@ -11,6 +11,9 @@
     <h1>LVM to Excel & Graph</h1>
     <input type="file" id="fileInput" />
     <label for="fileInput" class="custom-upload-btn">Choose File</label>
+    <div id="loading" style="display: none;">
+        <div class="spinner"></div>
+    </div>
     <button onclick="uploadFile()">Upload & Process</button>
 
     <div id="result" style="display: none;">

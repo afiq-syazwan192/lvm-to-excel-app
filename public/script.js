@@ -19,9 +19,16 @@ async function uploadFile() {
     const formData = new FormData();
     formData.append("file", file);
 
+    const loadingSpinner = document.getElementById("loading");
+
     try {
+        // Show the loading spinner
+        loadingSpinner.style.display = "block";
         const response = await fetch("/upload", { method: "POST", body: formData });
         const result = await response.json();
+
+        // Hide the loading spinner
+        loadingSpinner.style.display = "none";
 
         if (result.success) {
             document.getElementById("result").style.display = "block";
@@ -33,5 +40,6 @@ async function uploadFile() {
     } catch (error) {
         console.error("Upload failed:", error);
         alert("An error occurred while uploading.");
+        loadingSpinner.style.display = "none"; // Hide spinner on error
     }
 }
